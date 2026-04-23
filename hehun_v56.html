@@ -1,0 +1,1815 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes"/>
+    <title>八字合婚 · 红线牵缘V5.2</title>
+    <link href="https://fonts.loli.net/css2?family=Noto+Serif+SC:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+    <link rel="stylesheet" href="https://s4.zstatic.net/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+    <script src="https://cdn.jsdmirror.com/npm/lunar-javascript@1.7.6/lunar.min.js"></script>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'PingFang SC', 'Microsoft YaHei', 'Helvetica Neue', 'Segoe UI', sans-serif;
+            font-weight: 500;
+            background: linear-gradient(135deg, #ffe4e9 0%, #ffd4e5 100%);
+            color: #4a1f2e;
+            padding: 12px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            text-rendering: optimizeLegibility;
+            line-height: 1.6;
+            letter-spacing: 0.02em;
+        }
+        .container {
+            max-width: 1200px;
+            width: 100%;
+            background: #fff9fb;
+            border-radius: 24px;
+            box-shadow: 0 10px 30px rgba(210, 80, 120, 0.15);
+            padding: 28px;
+            border: 1px solid #f8c9d4;
+            margin: 0 auto;
+        }
+        h1 {
+            text-align: center;
+            font-weight: 700;
+            color: #b34167;
+            margin-bottom: 8px;
+            font-size: 1.8rem;
+            letter-spacing: 2px;
+        }
+        h1 i { color: #d65f8c; margin: 0 10px; }
+        .sub {
+            text-align: center;
+            color: #c46a85;
+            margin-bottom: 25px;
+            font-size: 0.9rem;
+            border-bottom: 1px dashed #f5b0c0;
+            padding-bottom: 10px;
+        }
+        .input-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 24px;
+            margin-bottom: 24px;
+        }
+        .input-card {
+            background: #fff1f5;
+            border-radius: 20px;
+            padding: 24px;
+            border: 1px solid #fad4e0;
+            box-shadow: 0 5px 12px rgba(210, 80, 120, 0.05);
+        }
+        .input-card h2 {
+            font-size: 1.2rem;
+            color: #b34167;
+            margin-bottom: 18px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            border-left: 4px solid #d65f8c;
+            padding-left: 12px;
+        }
+        label {
+            display: block;
+            margin-bottom: 6px;
+            color: #9f4e6f;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+        input[type="date"], select {
+            width: 100%;
+            padding: 12px 14px;
+            border: 1px solid #f3b6c8;
+            border-radius: 30px;
+            font-size: 1rem;
+            margin-bottom: 16px;
+            background: white;
+            transition: all 0.2s;
+            font-family: inherit;
+        }
+        input[type="date"]:focus, select:focus {
+            outline: none;
+            border-color: #d65f8c;
+            box-shadow: 0 0 0 3px rgba(214, 95, 140, 0.2);
+        }
+        .btn {
+            width: 100%;
+            background: linear-gradient(135deg, #d65f8c 0%, #c44569 100%);
+            color: white;
+            padding: 16px;
+            border: none;
+            border-radius: 60px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 600;
+            letter-spacing: 2px;
+            box-shadow: 0 8px 18px rgba(214, 95, 140, 0.3);
+        }
+        .btn:hover {
+            background: linear-gradient(135deg, #c44569 0%, #b34167 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 12px 22px rgba(180, 60, 100, 0.3);
+        }
+        .btn:disabled { background: #ccc; cursor: not-allowed; transform: none; box-shadow: none; }
+        .result-box { display: none; margin-top: 32px; border-top: 2px solid #fad4e0; padding-top: 32px; }
+        .pan-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+            margin-bottom: 32px;
+        }
+        @media (max-width: 768px) { .pan-container { grid-template-columns: 1fr; } }
+        .bazi-pan {
+            background: #fff5f9;
+            border-radius: 24px;
+            padding: 20px;
+            border: 1px solid #fbc1d0;
+            box-shadow: 0 8px 18px rgba(220, 130, 150, 0.1);
+        }
+        .pan-title {
+            font-size: 1.2rem;
+            color: #b34167;
+            margin-bottom: 12px;
+            border-left: 4px solid #d65f8c;
+            padding-left: 12px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .pattern-tag {
+            display: inline-block;
+            background: #d65f8c;
+            color: white;
+            padding: 2px 10px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+        .yongshen-display {
+            background: #ffeef2;
+            padding: 8px 12px;
+            border-radius: 12px;
+            font-size: 0.85rem;
+            margin-bottom: 12px;
+            color: #9f4e6f;
+            border: 1px solid #fad4e0;
+            text-align: center;
+        }
+        .pan-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+        }
+        .pillar {
+            background: white;
+            border: 1px solid #fce3ea;
+            border-radius: 16px;
+            padding: 12px 4px;
+            text-align: center;
+            transition: all 0.2s;
+        }
+        .pillar:hover { border-color: #d65f8c; box-shadow: 0 8px 16px rgba(214, 95, 140, 0.1); }
+        .pillar.day-pillar { border: 2px solid #c44569; background: #ffeef2; }
+        .pillar-title { font-weight: 600; color: #b35f7a; font-size: 0.8rem; margin-bottom: 6px; }
+        .tian-gan { font-size: 1.5rem; font-weight: 700; color: #912f56; line-height: 1.2; }
+        .di-zhi { font-size: 1.4rem; margin: 4px 0 6px; color: #b34167; font-weight: 600; }
+        .cang-gan, .nayin { font-size: 0.7rem; color: #a05773; line-height: 1.4; }
+        .cang-gan span, .nayin span {
+            display: inline-block;
+            background: #fbe7ed;
+            padding: 1px 6px;
+            border-radius: 10px;
+            margin: 1px;
+        }
+        .score-wrap {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 40px;
+            margin: 32px 0;
+            background: linear-gradient(135deg, #fff5f9 0%, #ffeef2 100%);
+            padding: 28px;
+            border-radius: 80px;
+            border: 2px solid #fbc1d0;
+            box-shadow: inset 0 1px 0 rgba(255,255,255,0.8);
+        }
+        @media (max-width: 768px) {
+            .score-wrap { flex-direction: column; gap: 16px; border-radius: 40px; text-align: center; }
+        }
+        .score-num {
+            font-size: 4.5rem;
+            font-weight: 800;
+            color: #c44569;
+            font-family: 'Noto Serif SC', Georgia, serif;
+            text-shadow: 2px 2px 0 rgba(0,0,0,0.05);
+        }
+        .score-meta { display: flex; flex-direction: column; align-items: flex-start; }
+        @media (max-width: 768px) { .score-meta { align-items: center; } }
+        .level-tag {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #912f56;
+        }
+        .grade-desc {
+            font-size: 0.9rem;
+            color: #b35f7a;
+            max-width: 300px;
+        }
+        .layer-tags {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .layer-tag {
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+        .layer-tag.redline { background: #ffebee; color: #c62828; border: 1px solid #ef9a9a; }
+        .layer-tag.structure { background: #e8f5e9; color: #2e7d32; border: 1px solid #a5d6a7; }
+        .layer-tag.adjustment { background: #fff8e1; color: #f57f17; border: 1px solid #ffe082; }
+        .fatal-box {
+            background: #fff2f2;
+            border: 1px solid #fbc1d0;
+            border-radius: 24px;
+            padding: 24px;
+            margin-bottom: 28px;
+        }
+        .fatal-box i { color: #c44569; margin-right: 8px; }
+        .fatal-item {
+            color: #c44569;
+            font-size: 0.95rem;
+            margin-top: 12px;
+            font-weight: 600;
+            padding-left: 12px;
+            border-left: 3px solid #ef5350;
+        }
+        .fatal-item.major { color: #e65100; border-left-color: #ff9800; }
+        .structure-box {
+            background: #f1f8e9;
+            border: 1px solid #c5e1a5;
+            border-radius: 24px;
+            padding: 24px;
+            margin-bottom: 28px;
+        }
+        .structure-item {
+            color: #558b2f;
+            font-size: 0.95rem;
+            margin-top: 10px;
+            font-weight: 600;
+        }
+        .detail-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 16px;
+            margin: 28px 0;
+        }
+        .detail-card {
+            background: white;
+            border: 1px solid #fbc1d0;
+            border-radius: 20px;
+            padding: 20px;
+            transition: all 0.2s;
+            position: relative;
+            overflow: hidden;
+        }
+        .detail-card::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 4px;
+            background: #bcaaa4;
+        }
+        .detail-card.plus::before { background: #66bb6a; }
+        .detail-card.minus::before { background: #ef5350; }
+        .detail-card.warning::before { background: #ff9800; }
+        .detail-card:hover {
+            box-shadow: 0 10px 22px rgba(214, 95, 140, 0.1);
+            transform: translateY(-2px);
+        }
+        .detail-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        .detail-label {
+            font-size: 1.05rem;
+            font-weight: 600;
+            color: #b34167;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .point {
+            font-size: 1rem;
+            font-weight: 700;
+            padding: 4px 12px;
+            border-radius: 40px;
+            background: #f5f5f5;
+            color: #616161;
+        }
+        .point.plus { color: #2e7d32; background: #e8f5e9; }
+        .point.minus { color: #c62828; background: #ffebee; }
+        .point.warning { color: #e65100; background: #fff3e0; }
+        .detail-text { font-size: 0.95rem; color: #6b3f52; line-height: 1.6; }
+        .resolution-text {
+            color: #2e7d32;
+            font-size: 0.85rem;
+            margin-top: 8px;
+            font-style: italic;
+            background: #f1f8e9;
+            padding: 8px 12px;
+            border-radius: 8px;
+            border-left: 3px solid #66bb6a;
+        }
+        .advice-box {
+            background: #fff5f9;
+            border-radius: 24px;
+            padding: 24px;
+            border: 1px solid #fbc1d0;
+            margin-top: 28px;
+        }
+        .advice-box h3 {
+            font-size: 1.2rem;
+            margin-bottom: 16px;
+            color: #912f56;
+            border-bottom: 2px solid #fad4e0;
+            padding-bottom: 8px;
+        }
+        .advice-box ul { padding-left: 24px; }
+        .advice-box li {
+            font-size: 0.95rem;
+            color: #7a4d60;
+            margin-bottom: 12px;
+            line-height: 1.6;
+        }
+        .footer {
+            margin-top: 32px;
+            font-size: 0.85rem;
+            color: #b35f7a;
+            text-align: center;
+            border-top: 1px dashed #f5b0c0;
+            padding-top: 20px;
+        }
+        .shengxiao-name {
+            font-size: 1rem;
+            color: #b35f7a;
+            text-align: center;
+            margin-bottom: 12px;
+            font-weight: 600;
+        }
+        .lib-error {
+            background: #ffe0f0;
+            color: #b34167;
+            padding: 16px;
+            border-radius: 30px;
+            margin-bottom: 20px;
+            text-align: center;
+            display: none;
+            border: 1px solid #f8a5b5;
+            font-weight: 600;
+        }
+        @media (max-width: 768px) {
+            .score-num { font-size: 3.5rem; }
+            .pan-grid { grid-template-columns: repeat(2, 1fr); }
+            .pillar { padding: 10px 4px; }
+            .tian-gan { font-size: 1.3rem; }
+            .di-zhi { font-size: 1.2rem; }
+        }
+        .section-divider {
+            height: 2px;
+            background: linear-gradient(to right, transparent, #f5b0c0, transparent);
+            margin: 20px 0;
+        }
+        .analysis-category {
+            margin: 15px 0;
+            padding: 10px 0;
+            border-bottom: 1px solid #f5b0c0;
+        }
+        .analysis-category h3 {
+            color: #b34167;
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1><i class="fa-solid fa-heart"></i> 红线牵缘·八字合婚V5.2 <i class="fa-solid fa-heart"></i></h1>
+    <div class="sub">用神算法优化 · 合化局识别 · 极旺/极弱精准处理</div>
+
+    <div id="libError" class="lib-error">命理库加载中，请稍候...</div>
+
+    <form id="hehunForm">
+        <div class="input-row">
+            <div class="input-card">
+                <h2><i class="fa-solid fa-mars"></i> 乾造（男命）</h2>
+                <label><i class="fa-regular fa-calendar"></i> 公历出生日期</label>
+                <input type="date" id="manDate" value="1990-01-01"/>
+                <label><i class="fa-regular fa-clock"></i> 出生时辰</label>
+                <select id="manShichen">
+                    <option value="zi">子时（23:00-01:00）</option><option value="chou">丑时（01:00-03:00）</option>
+                    <option value="yin">寅时（03:00-05:00）</option><option value="mao">卯时（05:00-07:00）</option>
+                    <option value="chen">辰时（07:00-09:00）</option><option value="si">巳时（09:00-11:00）</option>
+                    <option value="wu" selected>午时（11:00-13:00）</option><option value="wei">未时（13:00-15:00）</option>
+                    <option value="shen">申时（15:00-17:00）</option><option value="you">酉时（17:00-19:00）</option>
+                    <option value="xu">戌时（19:00-21:00）</option><option value="hai">亥时（21:00-23:00）</option>
+                </select>
+            </div>
+            <div class="input-card">
+                <h2><i class="fa-solid fa-venus"></i> 坤造（女命）</h2>
+                <label><i class="fa-regular fa-calendar"></i> 公历出生日期</label>
+                <input type="date" id="womanDate" value="1992-02-02"/>
+                <label><i class="fa-regular fa-clock"></i> 出生时辰</label>
+                <select id="womanShichen">
+                    <option value="zi">子时（23:00-01:00）</option><option value="chou">丑时（01:00-03:00）</option>
+                    <option value="yin">寅时（03:00-05:00）</option><option value="mao">卯时（05:00-07:00）</option>
+                    <option value="chen">辰时（07:00-09:00）</option><option value="si">巳时（09:00-11:00）</option>
+                    <option value="wu" selected>午时（11:00-13:00）</option><option value="wei">未时（13:00-15:00）</option>
+                    <option value="shen">申时（15:00-17:00）</option><option value="you">酉时（17:00-19:00）</option>
+                    <option value="xu">戌时（19:00-21:00）</option><option value="hai">亥时（21:00-23:00）</option>
+                </select>
+            </div>
+        </div>
+        <button type="button" class="btn" id="calcBtn"><i class="fa-solid fa-heart-pulse"></i> 开启红线·推演姻缘</button>
+    </form>
+
+    <div id="resultArea" class="result-box"></div>
+
+    <div class="footer">
+        <i class="fa-regular fa-copyright"></i> 红线牵缘V5.2 | 融合传统命理与现代算法<br/>
+        <small>三层评分：红线层(±30) · 结构层(±15) · 调候层(±5) | 智能化解引擎</small>
+    </div>
+</div>
+
+<script>
+/**
+ * 红线牵缘V5.2 核心算法
+ * 优化：用神选择引入合化局识别、极旺/极弱特殊处理、喜忌补全
+ */
+(function() {
+    'use strict';
+
+    // ================= 分数配置区 =================
+    const SCORE_CONFIG = {
+        nianLiuHe: 6, nianSanHe: 4, nianChong: -4, nianHai: -2, nianTianGanHe: 4, nianKeDiChong: -10,
+        yueLiuHe: 5, yueSanHe: 3, yueChong: -4, yueGanSheng: 2,
+        riGanTianHe: 15, riGanShengMale: 12, riGanShengFemale: 12, riGanKeMale: -8, riGanKeFemale: -8,
+        riLiuHe: 20, riChong: -20, riHai: -6,
+        shiLiuHe: 3, shiChong: -2,
+        yongShenPerScore: 3, yongShenMaxScore: 12,
+        yinchaScore: -3, yangrenScore: -2, kuiGangDouble: -5, kuiGangSingle: -2, guGuPei: -4,
+        taoHuaHuJian: 4, taoHuaChong: -3,
+        biJieDuoCai: -5, shangGuanKeGuan: -5,
+        riKeDiChong: -25, sanXing: -20, fuYin: -10, duoChongChongBase: -3, yangRenChong: -3
+    };
+
+    // ================= 基础数据定义 =================
+    const GAN_LIST = '甲乙丙丁戊己庚辛壬癸';
+    const ZHI_LIST = '子丑寅卯辰巳午未申酉戌亥';
+    const WX_GAN = {'甲':'木','乙':'木','丙':'火','丁':'火','戊':'土','己':'土','庚':'金','辛':'金','壬':'水','癸':'水'};
+    const ZHI_WX = {'子':'水','丑':'土','寅':'木','卯':'木','辰':'土','巳':'火','午':'火','未':'土','申':'金','酉':'金','戌':'土','亥':'水'};
+    const TIAN_GAN_WU_HE = {'甲':'己','己':'甲','乙':'庚','庚':'乙','丙':'辛','辛':'丙','丁':'壬','壬':'丁','戊':'癸','癸':'戊'};
+    const ZHI_LIU_HE = {'子':'丑','丑':'子','寅':'亥','亥':'寅','卯':'戌','戌':'卯','辰':'酉','酉':'辰','巳':'申','申':'巳','午':'未','未':'午'};
+    const ZHI_SAN_HE = [['申','子','辰'],['亥','卯','未'],['寅','午','戌'],['巳','酉','丑']];
+    const ZHI_SAN_HE_MAP = {
+        '申子辰': '水', '亥卯未': '木', '寅午戌': '火', '巳酉丑': '金',
+        '子申辰': '水', '卯亥未': '木', '午寅戌': '火', '酉巳丑': '金',
+        '辰申子': '水', '未亥卯': '木', '戌寅午': '火', '丑巳酉': '金',
+        '申辰子': '水', '亥未卯': '木', '寅戌午': '火', '巳丑酉': '金',
+        '子辰申': '水', '卯未亥': '木', '午戌寅': '火', '酉丑巳': '金',
+        '辰子申': '水', '未卯亥': '木', '戌午寅': '火', '丑酉巳': '金'
+    };
+    const ZHI_LIU_CHONG = {'子':'午','午':'子','丑':'未','未':'丑','寅':'申','申':'寅','卯':'酉','酉':'卯','辰':'戌','戌':'辰','巳':'亥','亥':'巳'};
+    const ZHI_LIU_HAI = {'子':'未','未':'子','丑':'午','午':'丑','寅':'巳','巳':'寅','卯':'辰','辰':'卯','申':'亥','亥':'申','酉':'戌','戌':'酉'};
+    const ZHI_PO = {'子':'酉','酉':'子','丑':'辰','辰':'丑','寅':'30','亥':'寅','卯':'午','午':'卯','巳':'申','申':'巳','未':'戌','戌':'未'};
+    const ZHI_SAN_XING = [['寅','巳','申'],['丑','未','戌'],['子','卯'],['午','午'],['酉','酉'],['辰','辰'],['亥','亥']];
+    const NA_YIN_WX = {
+        '海中金':'金','炉中火':'火','大林木':'木','路旁土':'土','剑锋金':'金','山头火':'火',
+        '涧下水':'水','城头土':'土','白蜡金':'金','杨柳木':'木','泉中水':'水','屋上土':'土',
+        '霹雳火':'火','松柏木':'木','长流水':'水','沙中金':'金','山下火':'火','平地木':'木',
+        '壁上土':'土','金箔金':'金','覆灯火':'火','天河水':'水','大驿土':'土','钗钏金':'金',
+        '桑柘木':'木','大溪水':'水','沙中土':'土','天上火':'火','石榴木':'木','大海水':'水'
+    };
+    const YINCHA_YANGCUO = ['丙子','丙午','丁丑','丁未','戊寅','戊申','辛卯','辛酉','壬辰','壬戌','癸巳','癸亥'];
+    const WX_COLOR_MAP = { '木': '绿色/青色（木）', '火': '红色/紫色（火）', '土': '黄色/棕色（土）', '金': '白色/金色（金）', '水': '黑色/蓝色（水）' };
+
+    // ================= Quantum字典 (Quantum Data Dictionaries)
+    const QUANTUM_DICT = {
+        WX: {'甲':'木','乙':'木','丙':'火','丁':'火','戊':'土','己':'土','庚':'金','辛':'金','壬':'水','癸':'水',
+             '寅':'木','卯':'木','巳':'火','午':'火','申':'金','酉':'金','亥':'水','子':'水','辰':'土','戌':'土','丑':'土','未':'土'},
+        SHISHEN: {
+          '木':{self:'木', res:'水', off:'金', wea:'土', out:'火'}, '火':{self:'火', res:'木', off:'水', wea:'金', out:'土'},
+          '土':{self:'土', res:'火', off:'木', wea:'水', out:'金'}, '金':{self:'金', res:'土', off:'火', wea:'木', out:'水'},
+          '水':{self:'水', res:'金', off:'土', wea:'火', out:'木'}
+        },
+        HIDDEN: {
+          '子':['癸'], '丑':['己','癸','辛'], '寅':['甲','丙','戊'], '卯':['乙'], 
+          '辰':['戊','乙','癸'], '巳':['丙','戊','庚'], '午':['丁','己'], '未':['己','丁','乙'], 
+          '申':['庚','壬','戊'], '酉':['辛'], '戌':['戊','辛','丁'], '亥':['壬','甲']
+        },
+        HIDDEN_WEIGHT: [0.6, 0.3, 0.1],
+        HE_GAN: {'甲':'己','己':'甲','乙':'庚','庚':'乙','丙':'辛','辛':'丙','丁':'壬','壬':'丁','戊':'癸','癸':'戊'},
+        CHONG_ZHI: {'子':'午','午':'子','丑':'未','未':'丑','寅':'申','申':'寅','卯':'酉','酉':'卯','辰':'戌','戌':'辰','巳':'亥','亥':'巳'},
+        QI_PHASE: {
+          '甲': {'亥':'长生','子':'沐浴','丑':'冠带','寅':'临官','卯':'帝旺','辰':'衰','巳':'病','午':'死','未':'墓','申':'绝','酉':'胎','戌':'养'},
+          '丙': {'寅':'长生','卯':'沐浴','辰':'冠带','巳':'临官','午':'帝旺','未':'衰','申':'病','酉':'死','戌':'墓','亥':'绝','子':'胎','丑':'养'},
+          '戊': {'寅':'长生','卯':'沐浴','辰':'冠带','巳':'临官','午':'帝旺','未':'衰','申':'病','酉':'死','戌':'墓','亥':'绝','子':'胎','丑':'养'},
+          '庚': {'巳':'长生','午':'沐浴','未':'冠带','申':'临官','酉':'帝旺','戌':'衰','亥':'病','子':'死','丑':'墓','寅':'绝','卯':'胎','辰':'养'},
+          '壬': {'申':'长生','酉':'沐浴','戌':'冠带','亥':'临官','子':'帝旺','丑':'衰','寅':'病','卯':'死','辰':'墓','巳':'绝','午':'胎','未':'养'},
+          '乙': {'午':'长生','巳':'沐浴','辰':'冠带','卯':'临官','寅':'帝旺','丑':'衰','子':'病','亥':'死','戌':'墓','酉':'绝','申':'胎','未':'养'},
+          '丁': {'酉':'长生','申':'沐浴','未':'冠带','午':'临官','巳':'帝旺','辰':'衰','卯':'病','寅':'死','丑':'墓','子':'绝','亥':'胎','戌':'养'},
+          '己': {'酉':'长生','申':'沐浴','未':'冠带','午':'临官','巳':'帝旺','辰':'衰','卯':'病','寅':'死','丑':'墓','子':'绝','亥':'胎','戌':'养'},
+          '辛': {'子':'长生','亥':'沐浴','戌':'冠带','酉':'临官','申':'帝旺','未':'衰','午':'病','巳':'死','辰':'墓','卯':'绝','寅':'胎','丑':'养'},
+          '癸': {'卯':'长生','寅':'沐浴','丑':'冠带','子':'临官','亥':'帝旺','戌':'衰','酉':'病','申':'死','未':'墓','午':'绝','巳':'胎','辰':'养'}
+        },
+        JIAZI: [
+          '甲子','乙丑','丙寅','丁卯','戊辰','己巳','庚午','辛未','壬申','癸酉',
+          '甲戌','乙亥','丙子','丁丑','戊寅','己卯','庚辰','辛巳','壬午','癸未',
+          '甲申','乙酉','丙戌','丁亥','戊子','己丑','庚寅','辛卯','壬辰','癸巳',
+          '甲午','乙未','丙申','丁酉','戊戌','己亥','庚子','辛丑','壬寅','癸卯',
+          '甲辰','乙巳','丙午','丁未','戊申','己酉','庚戌','辛亥','壬子','癸丑',
+          '甲寅','乙卯','丙辰','丁巳','戊午','己未','庚申','辛酉','壬戌','癸亥'
+        ],
+        SEASON_TIANTU: {
+          '寅': { cold: ['癸'], hot: ['丁', '丙'] },
+          '卯': { cold: ['癸'], hot: ['丁', '丙'] },
+          '辰': { cold: ['癸'], hot: ['丁', '丙'] },
+          '巳': { cold: ['癸', '壬'], hot: ['甲', '乙'] },
+          '午': { cold: ['癸', '壬'], hot: ['甲', '乙'] },
+          '未': { cold: ['癸', '壬'], hot: ['甲', '乙'] },
+          '申': { cold: ['丁', '丙'], hot: ['癸', '壬'] },
+          '酉': { cold: ['丁', '丙'], hot: ['癸', '壬'] },
+          '戌': { cold: ['丁', '丙'], hot: ['癸', '壬'] },
+          '亥': { cold: ['丁', '丙'], hot: ['甲', '乙'] },
+          '子': { cold: ['丁', '丙'], hot: ['甲', '乙'] },
+          '丑': { cold: ['丁', '丙'], hot: ['甲', '乙'] }
+        }
+    };
+
+    // ================= 辅助函数 =================
+    const ganWuXing = (g) => WX_GAN[g];
+    const zhiWuXing = (z) => ZHI_WX[z];
+    const getSheng = (wx) => ({'木':'火','火':'土','土':'金','金':'水','水':'木'})[wx];
+    const getKe = (wx) => ({'木':'土','土':'水','水':'火','火':'金','金':'木'})[wx];
+    const getKeWo = (wx) => ({'木':'金','火':'水','土':'木','金':'火','水':'土'})[wx];
+    const ganKe = (g1, g2) => getKe(ganWuXing(g1)) === ganWuXing(g2);
+    const ganSheng = (g1, g2) => getSheng(ganWuXing(g1)) === ganWuXing(g2);
+    const tianGanHe = (g1, g2) => TIAN_GAN_WU_HE[g1] === g2;
+    const zhiLiuChong = (z1, z2) => ZHI_LIU_CHONG[z1] === z2;
+    const zhiLiuHe = (z1, z2) => ZHI_LIU_HE[z1] === z2;
+    const isZhiSanHe = (z1, z2) => ZHI_SAN_HE.some(g => g.includes(z1) && g.includes(z2) && z1 !== z2);
+    const isZhiBanHe = (z1, z2) => (z1+z2 in {'申子':'水','子辰':'水','亥卯':'木','卯未':'木','寅午':'火','午戌':'火','巳酉':'金','酉丑':'金'}) || (z2+z1 in {'申子':'水','子辰':'水','亥卯':'木','卯未':'木','寅午':'火','午戌':'火','巳酉':'金','酉丑':'金'});
+    const zhiLiuHai = (z1, z2) => ZHI_LIU_HAI[z1] === z2;
+    const zhiPo = (z1, z2) => ZHI_PO[z1] === z2;
+    const isZhiSanXing = (z1, z2) => ZHI_SAN_XING.some(x => (x.length===2 && ((x[0]===z1&&x[1]===z2)||(x[0]===z2&&x[1]===z1)||(x[0]===z1&&x[0]===z2))) || (x.length===3 && x.includes(z1) && x.includes(z2) && z1!==z2));
+    const naYinWuXing = (ny) => NA_YIN_WX[ny] || '';
+    const getZhiCangGan = (z) => ({ '子':['癸'],'丑':['己','癸','辛'],'寅':['甲','丙','戊'],'卯':['乙'],'辰':['戊','乙','癸'],'巳':['丙','庚','戊'],'午':['丁','己'],'未':['己','丁','乙'],'申':['庚','壬','戊'],'酉':['辛'],'戌':['戊','辛','丁'],'亥':['壬','甲'] })[z] || [];
+
+    function normalizeHideGan(h) { 
+        return Array.isArray(h) ? h : (typeof h === 'string' ? h.replace(/[,，\s]/g, '').split('') : []); 
+    }
+
+    /**
+     * 检查某地支是否参与合化，并返回合化后的实际五行
+     */
+    function getHeHuaEffect(targetZhi, allZhi) {
+        const sanHeGroups = [
+            { zhi: ['申','子','辰'], wx: '水' },
+            { zhi: ['亥','卯','未'], wx: '木' },
+            { zhi: ['寅','午','戌'], wx: '火' },
+            { zhi: ['巳','酉','丑'], wx: '金' }
+        ];
+        for (let group of sanHeGroups) {
+            if (group.zhi.includes(targetZhi)) {
+                const count = group.zhi.filter(z => allZhi.includes(z)).length;
+                if (count >= 3) return { resultWx: group.wx, reason: `三合${group.wx}局` };
+                if (count === 2) {
+                    const other = group.zhi.find(z => z !== targetZhi && allZhi.includes(z));
+                    if (other) {
+                        const isShengDi = (targetZhi === group.zhi[0] && other === group.zhi[1]) || (targetZhi === group.zhi[1] && other === group.zhi[0]);
+                        const isMuDi = (targetZhi === group.zhi[1] && other === group.zhi[2]) || (targetZhi === group.zhi[2] && other === group.zhi[1]);
+                        if (isShengDi || isMuDi) return { resultWx: group.wx, reason: `半合${group.wx}局` };
+                    }
+                }
+            }
+        }
+        const liuHeMap = { '子丑':'土','寅亥':'木','卯戌':'火','辰酉':'金','巳申':'水','午未':'土' };
+        for (let z of allZhi) {
+            if (z === targetZhi) continue;
+            const key1 = targetZhi + z, key2 = z + targetZhi;
+            const wx = liuHeMap[key1] || liuHeMap[key2];
+            if (wx) return { resultWx: wx, reason: `六合化${wx}` };
+        }
+        return null;
+    }
+
+    /**
+     * 获取合局对某五行的加成（用于强弱计算）
+     */
+    function getHeJuBonus(zhiList, targetWx) {
+        let bonus = 0;
+        const sanHeGroups = [
+            { zhi: ['申','子','辰'], wx: '水' },
+            { zhi: ['亥','卯','未'], wx: '木' },
+            { zhi: ['寅','午','戌'], wx: '火' },
+            { zhi: ['巳','酉','丑'], wx: '金' }
+        ];
+        sanHeGroups.forEach(group => {
+            const count = group.zhi.filter(z => zhiList.includes(z)).length;
+            if (count >= 3 && group.wx === targetWx) bonus += 20;
+            else if (count === 2 && group.wx === targetWx) bonus += 8;
+        });
+        const liuHeMap = { '子丑':'土','寅亥':'木','卯戌':'火','辰酉':'金','巳申':'水','午未':'土' };
+        for (let i = 0; i < zhiList.length; i++) {
+            for (let j = i+1; j < zhiList.length; j++) {
+                const key1 = zhiList[i] + zhiList[j], key2 = zhiList[j] + zhiList[i];
+                const wx = liuHeMap[key1] || liuHeMap[key2];
+                if (wx === targetWx) bonus += 6;
+            }
+        }
+        return bonus;
+    }
+
+    // ================= 拓扑节点类 (BaziNode Class) =================
+    class BaziNode {
+        constructor(id, label, char, type) {
+          this.id = id; this.label = label; this.char = char;           
+          this.originalWx = QUANTUM_DICT.WX[char]; this.currentWx = this.originalWx; 
+          this.type = type; 
+          this.energy = 1.0; 
+          
+          this.states = [];       
+          this.shenshas = [];     
+          this.qiPhase = '';      
+          this.isVoid = false;    
+          this.isTransformed = false; 
+          this.isHuoYi = false;
+          this.transformedWx = null;
+        }
+        
+        addState(stateStr, energyMult = 1.0) {
+          if(!this.states.includes(stateStr)) {
+            this.states.push(stateStr);
+            this.energy *= energyMult;
+          }
+        }
+        
+        hasState(stateStr) { return this.states.some(s => s.includes(stateStr)); }
+        isActive() { return !this.hasState('重伤'); }
+    }
+
+    // ================= Quantum算法模块 (Refactored Core Algorithms) =================
+    function getShiShenName(dmWx, targetWx) {
+        if(!dmWx || !targetWx) return '未知';
+        for(let role in QUANTUM_DICT.SHISHEN[dmWx]) { 
+          if(QUANTUM_DICT.SHISHEN[dmWx][role] === targetWx) return {self:'比劫', res:'印星', off:'官杀', wea:'财星', out:'食伤'}[role];
+        } return '未知';
+    }
+
+    function processNaYinAndPhase(nodes, nayinDict, dmChar) {
+        for (const p of ['y', 'm', 'd', 'h']) {
+            nodes[`${p}G`].naYin = nayinDict[p];
+            nodes[`${p}Z`].naYin = nayinDict[p];
+        }
+
+        [nodes.yZ, nodes.mZ, nodes.dZ, nodes.hZ].forEach(z => {
+          let phase = QUANTUM_DICT.QI_PHASE[dmChar][z.char];
+          z.qiPhase = phase;
+          if(phase === '临官' || phase === '帝旺') {
+            z.addState('强根', 1.1);
+          }
+        });
+    }
+
+    function processVoid(nodes, bz) {
+        const dayPillar = bz.getDayGan() + bz.getDayZhi();
+        
+        const idx = QUANTUM_DICT.JIAZI.indexOf(dayPillar);
+        if (idx === -1) return;
+        
+        const xunShouIdx = Math.floor(idx / 10) * 10;
+        const xunShou = QUANTUM_DICT.JIAZI[xunShouIdx];
+        const voidIdx1 = (xunShouIdx + 10) % 60;
+        const voidIdx2 = (xunShouIdx + 11) % 60;
+        const void1 = QUANTUM_DICT.JIAZI[voidIdx1].charAt(1);
+        const void2 = QUANTUM_DICT.JIAZI[voidIdx2].charAt(1);
+        
+        let voidFound = false;
+        ['yZ', 'mZ', 'dZ', 'hZ'].forEach(key => {
+          let node = nodes[key];
+          if(node.char === void1 || node.char === void2) {
+            node.isVoid = true;
+            node.addState('空亡', 0.3);
+            voidFound = true;
+          }
+        });
+    }
+
+    function processShenSha(nodes) {
+        let yZhi = nodes.yZ.char, dZhi = nodes.dZ.char, dGan = nodes.dG.char;
+        let zhis = [nodes.yZ, nodes.mZ, nodes.dZ, nodes.hZ];
+
+        const yangrenMap = {'甲':'卯', '丙':'午', '戊':'午', '庚':'酉', '壬':'子'};
+        const getTaohua = (z) => ({'申':'酉','子':'酉','辰':'酉','亥':'子','卯':'子','未':'子','寅':'卯','午':'卯','戌':'卯','巳':'午','酉':'午','丑':'午'}[z]);
+        const getHuagai = (z) => ({'寅':'戌','午':'戌','戌':'戌','亥':'未','卯':'未','未':'未','申':'辰','子':'辰','辰':'辰','巳':'丑','酉':'丑','丑':'丑'}[z]);
+
+        let tY = getTaohua(yZhi), tD = getTaohua(dZhi);
+        let hY = getHuagai(yZhi), hD = getHuagai(dZhi);
+        let yr = yangrenMap[dGan];
+
+        zhis.forEach(z => {
+          if(z.char === yr) { z.shenshas.push('羊刃'); }
+          if(z.char === tY || z.char === tD) z.shenshas.push('桃花');
+          if(z.char === hY || z.char === hD) z.shenshas.push('华盖');
+        });
+    }
+
+    function applySeasonalBaseline(nodes, monthZhi) {
+        const rules = {
+          '木': { '亥':1.2, '子':1.2, '寅':1.4, '卯':1.4, '巳':0.8, '午':0.8, '辰':0.7, '戌':0.7, '丑':0.7, '未':0.7, '申':0.6, '酉':0.6 },
+          '火': { '寅':1.2, '卯':1.2, '巳':1.4, '午':1.4, '辰':0.8, '戌':0.8, '丑':0.8, '未':0.8, '申':0.6, '酉':0.6, '亥':0.6, '子':0.6 },
+          '土': { '巳':1.2, '午':1.2, '辰':1.4, '戌':1.4, '丑':1.4, '未':1.4, '申':0.8, '酉':0.8, '亥':0.7, '子':0.7, '寅':0.6, '卯':0.6 },
+          '金': { '辰':1.2, '戌':1.2, '丑':1.2, '未':1.2, '申':1.4, '酉':1.4, '亥':0.8, '子':0.8, '寅':0.6, '卯':0.6, '巳':0.6, '午':0.6 },
+          '水': { '申':1.2, '酉':1.2, '亥':1.4, '子':1.4, '寅':0.8, '卯':0.8, '巳':0.6, '午':0.6, '辰':0.7, '戌':0.7, '丑':0.7, '未':0.7 }
+        };
+        for(let key in nodes) {
+          let n = nodes[key];
+          let factor = rules[n.originalWx][monthZhi] || 1.0;
+          let stateName = factor >= 1.4 ? '当旺' : factor >= 1.2 ? '得相' : factor >= 0.8 ? '休气' : factor >= 0.7 ? '囚气' : '死绝';
+          n.addState(stateName, factor);
+        }
+    }
+
+    function processVerticalInteractions(nodes) {
+        const pairs = [ {g: nodes.yG, z: nodes.yZ}, {g: nodes.mG, z: nodes.mZ}, {g: nodes.dG, z: nodes.dZ}, {g: nodes.hG, z: nodes.hZ} ];
+        pairs.forEach(pair => {
+          let gan = pair.g, zhi = pair.z;
+          
+          if (gan.currentWx === zhi.currentWx) {
+            gan.addState('同气', 1.3); zhi.addState('同气', 1.3);
+          } else {
+            if(QUANTUM_DICT.SHISHEN[gan.currentWx].off === zhi.currentWx) {
+              gan.addState('盖头', 0.9); zhi.addState('受压', 0.75);
+            } else if (QUANTUM_DICT.SHISHEN[zhi.currentWx].off === gan.currentWx) {
+              zhi.addState('截脚', 0.9); gan.addState('截脚', 0.75);
+            }
+          }
+          
+          let hiddenGans = QUANTUM_DICT.HIDDEN[zhi.char] || [];
+          for(let i=0; i<hiddenGans.length; i++) {
+            if(QUANTUM_DICT.WX[hiddenGans[i]] === gan.currentWx) {
+              let rootType = ['本','中','余'][i];
+              let weight = QUANTUM_DICT.HIDDEN_WEIGHT[i];
+              gan.addState(`通${rootType}气根`, 1.0 + weight);
+              if(i === 0) gan.addState('强根', 1.05);
+              break; 
+            }
+          }
+        });
+    }
+
+    function processStemInteractions(nodes) {
+        const stems = [nodes.yG, nodes.mG, nodes.dG, nodes.hG];
+        for(let i=0; i<stems.length - 1; i++) {
+          let n1 = stems[i], n2 = stems[i+1];
+          
+          if (QUANTUM_DICT.HE_GAN[n1.char] === n2.char) {
+            continue; 
+          }
+
+          let isObstructed = false;
+          if (!isObstructed) {
+              if (QUANTUM_DICT.SHISHEN[n1.currentWx].out === n2.currentWx) { n2.addState('受生', 1.2); }
+              else if (QUANTUM_DICT.SHISHEN[n2.currentWx].out === n1.currentWx) { n1.addState('受生', 1.2); }
+              
+              if (QUANTUM_DICT.SHISHEN[n1.currentWx].off === n2.currentWx) { n2.addState('受克', 0.75); } 
+              else if (QUANTUM_DICT.SHISHEN[n2.currentWx].off === n1.currentWx) { n1.addState('受克', 0.75); }
+          }
+        }
+    }
+
+    function processCombinations(nodes) {
+        const zhiNodes = [nodes.yZ, nodes.mZ, nodes.dZ, nodes.hZ];
+        const zhiChars = zhiNodes.map(n => n.char);
+
+        // 三会局
+        const sanHui = [
+            { n: '寅卯辰', e: ['寅', '卯', '辰'], w: '木' },
+            { n: '巳午未', e: ['巳', '午', '未'], w: '火' },
+            { n: '申酉戌', e: ['申', '酉', '戌'], w: '金' },
+            { n: '亥子丑', e: ['亥', '子', '丑'], w: '水' }
+        ];
+
+        let huiMatch = sanHui.find(h => h.e.every(c => zhiChars.includes(c)));
+
+        if (huiMatch) {
+            let isSuccessful = nodes.mZ.char === huiMatch.e[1];
+
+            zhiNodes.forEach(n => {
+                if (huiMatch.e.includes(n.char)) {
+                    n.isHuoYi = true;
+                    if (isSuccessful) {
+                        n.isTransformed = true;
+                        n.transformedWx = huiMatch.w;
+                        if (n.originalWx === huiMatch.w) {
+                            n.addState('三会主', 1.8);
+                        } else {
+                            n.addState('从化', 1.0);
+                        }
+                    } else {
+                        n.addState('三会绊', 0.7);
+                    }
+                }
+            });
+
+        } else {
+            // 三合局
+            const sanHe = [
+                { n: '亥卯未', e: ['亥', '卯', '未'], w: '木' },
+                { n: '寅午戌', e: ['寅', '午', '戌'], w: '火' },
+                { n: '巳酉丑', e: ['巳', '酉', '丑'], w: '金' },
+                { n: '申子辰', e: ['申', '子', '辰'], w: '水' }
+            ];
+
+            let heMatch = sanHe.find(h => h.e.every(c => zhiChars.includes(c)));
+
+            if (heMatch) {
+                let isSuccessful = nodes.mZ.char === heMatch.e[1];
+
+                zhiNodes.forEach(n => {
+                    if (heMatch.e.includes(n.char)) {
+                        n.isHuoYi = true;
+                        if (isSuccessful) {
+                            n.isTransformed = true;
+                            n.transformedWx = heMatch.w;
+                            if (n.originalWx === heMatch.w) {
+                                n.addState('三合主', 1.6);
+                            } else {
+                                n.addState('从化', 1.0);
+                            }
+                        } else {
+                            n.addState('三合绊', 0.7);
+                        }
+                    }
+                });
+            }
+        }
+
+        // 六合
+        const zhiPairs = [
+            [nodes.yZ, nodes.mZ],
+            [nodes.mZ, nodes.dZ],
+            [nodes.dZ, nodes.hZ]
+        ];
+        const liuHe = [
+            { e: ['子', '丑'] },
+            { e: ['寅', '亥'] },
+            { e: ['卯', '戌'] },
+            { e: ['辰', '酉'] },
+            { e: ['巳', '申'] },
+            { e: ['午', '未'] }
+        ];
+
+        zhiPairs.forEach(pair => {
+            const a = pair[0].char;
+            const b = pair[1].char;
+
+            let match = liuHe.find(h => 
+                (h.e[0] === a && h.e[1] === b) || 
+                (h.e[0] === b && h.e[1] === a)
+            );
+
+            if (match) {
+                pair[0].isHuoYi = true;
+                pair[1].isHuoYi = true;
+                pair[0].addState('六合', 1.3);
+                pair[1].addState('六合', 1.3);
+            }
+        });
+    }
+
+    function processBranchInteractions(nodes) {
+        const adjPairs = [[nodes.yZ, nodes.mZ], [nodes.mZ, nodes.dZ], [nodes.dZ, nodes.hZ]];
+        adjPairs.forEach(pair => {
+          if(QUANTUM_DICT.CHONG_ZHI[pair[0].char] === pair[1].char) {
+            let e0 = pair[0].energy; let e1 = pair[1].energy;
+            if (e0 > e1 * 1.4) {
+              pair[0].addState('冲克占优', 0.85); pair[1].addState('重伤', 0.2);
+            } else if (e1 > e0 * 1.4) {
+              pair[1].addState('冲克占优', 0.85); pair[0].addState('重伤', 0.2);
+            } else {
+              pair[0].addState('受冲', 0.5); pair[1].addState('受冲', 0.5);
+            }
+          }
+        });
+    }
+
+    function processMediation(nodes) {
+        const MEDIATION_MAP = { '金-木': '水', '木-土': '火', '土-水': '金', '水-火': '木', '火-金': '土' };
+        let nodeArr = Object.values(nodes);
+        let mediatedPairs = new Set();
+        
+        for (let i = 0; i < nodeArr.length; i++) {
+          for (let j = 0; j < nodeArr.length; j++) {
+            if (i === j) continue;
+            let A = nodeArr[i], B = nodeArr[j];
+            if (!A.isActive() || !B.isActive()) continue;
+            
+            let effectiveAwx = A.isTransformed ? A.transformedWx : A.currentWx;
+            let effectiveBwx = B.isTransformed ? B.transformedWx : B.currentWx;
+            
+            if (QUANTUM_DICT.SHISHEN[effectiveAwx].off !== effectiveBwx) continue;
+
+            let mediatorWx = MEDIATION_MAP[`${effectiveAwx}-${effectiveBwx}`];
+            if (mediatorWx) {
+              let mediators = nodeArr.filter(n => {
+                  let nWx = n.isTransformed ? n.transformedWx : n.currentWx;
+                  return nWx === mediatorWx && n.isActive() && !n.isVoid;
+              });
+              
+              if (mediators.length > 0) {
+                let strongestC = mediators.reduce((prev, curr) => (prev.energy > curr.energy) ? prev : curr);
+                if (strongestC.energy < 0.6) continue;
+                
+                let pairId = `${A.id}->${B.id}`;
+                if (mediatedPairs.has(pairId)) continue;
+                mediatedPairs.add(pairId);
+
+                A.addState('通关泄', 1.0);
+                B.addState('受化生', 1.0);
+                strongestC.addState('枢纽', 1.1);
+              }
+            }
+          }
+        }
+    }
+
+    function processFuyinFanyin(nodes) {
+        let pillars = [
+           {name: '年柱', g: nodes.yG, z: nodes.yZ},
+           {name: '月柱', g: nodes.mG, z: nodes.mZ},
+           {name: '日柱', g: nodes.dG, z: nodes.dZ},
+           {name: '时柱', g: nodes.hG, z: nodes.hZ}
+        ];
+        for(let i=0; i<pillars.length; i++){
+            for(let j=i+1; j<pillars.length; j++){
+                let p1 = pillars[i], p2 = pillars[j];
+                if(p1.g.char === p2.g.char && p1.z.char === p2.z.char) {
+                }
+                let ganChong = QUANTUM_DICT.SHISHEN[p1.g.currentWx].off === p2.g.currentWx || QUANTUM_DICT.SHISHEN[p2.g.currentWx].off === p1.g.currentWx;
+                let zhiChong = QUANTUM_DICT.CHONG_ZHI[p1.z.char] === p2.z.char;
+                if(ganChong && zhiChong) {
+                }
+            }
+        }
+    }
+
+    // V-Next风格的格局判断函数
+    function isStemSeverelyDamaged(stem, nodes) {
+        const pillarMap = { 'yG':'yZ', 'mG':'mZ', 'dG':'dZ', 'hG':'hZ' };
+        const sitBranch = nodes[pillarMap[stem.id]];
+        if (sitBranch) {
+            let sitEffectiveWx = sitBranch.isTransformed ? sitBranch.transformedWx : sitBranch.currentWx;
+            if (QUANTUM_DICT.SHISHEN[sitEffectiveWx].off === stem.currentWx) return true;
+        }
+        
+        const stemList = [nodes.yG, nodes.mG, nodes.dG, nodes.hG];
+        const idx = stemList.findIndex(s => s.id === stem.id);
+        const left = idx > 0 ? stemList[idx-1] : null;
+        const right = idx < 3 ? stemList[idx+1] : null;
+        
+        for (let neighbor of [left, right]) {
+          if (!neighbor) continue;
+          if (QUANTUM_DICT.SHISHEN[neighbor.currentWx].off === stem.currentWx) {
+            if (!neighbor.hasState('合') && !neighbor.isHuoYi) return true;
+          }
+        }
+        
+        if (stem.isTransformed && stem.transformedWx !== stem.originalWx) return true;
+        if (stem.isVoid && stem.energy < 0.5) return true;
+        
+        return false;
+    }
+
+    function hasRealRoot(nodes, dmWx) {
+        const branches = [nodes.yZ, nodes.mZ, nodes.dZ, nodes.hZ];
+        for (let z of branches) {
+          if (!z.isActive() || z.isVoid) continue;
+          
+          const hidden = QUANTUM_DICT.HIDDEN[z.char];
+          for (let i = 0; i < hidden.length; i++) {
+            if (hidden[i] && QUANTUM_DICT.WX[hidden[i]] === dmWx) {
+                if (!z.hasState('重伤') && !z.hasState('受冲')) return true;
+            }
+          }
+        }
+        return false;
+    }
+
+    function getEffectiveMonthWx(monthZhiNode) {
+        if (monthZhiNode.isTransformed && monthZhiNode.transformedWx !== monthZhiNode.originalWx) {
+          return monthZhiNode.transformedWx;
+        }
+        const hidden = QUANTUM_DICT.HIDDEN[monthZhiNode.char];
+        return QUANTUM_DICT.WX[hidden[0]];
+    }
+
+    function hasStrongEnemy(nodes, dmWx) {
+        const allNodes = [...Object.values(nodes)];
+        for (let n of allNodes) {
+          if (n.id === 'dG') continue;
+          if (!n.isActive() || n.isVoid) continue;
+          
+          let effectiveWx = n.isTransformed ? n.transformedWx : n.currentWx;
+          const role = getShiShenName(dmWx, effectiveWx);
+          
+          if (role === '官杀' || role === '财星' || role === '食伤') {
+            if (n.type === '支') {
+              const hidden = QUANTUM_DICT.HIDDEN[n.char];
+              if (hidden[0] && QUANTUM_DICT.WX[hidden[0]] === effectiveWx) return true;
+            }
+            if (n.energy > 0.7) return true;
+          }
+        }
+        return false;
+    }
+
+    function checkHuaQiGe(nodes, dmWx) {
+        const dmChar = nodes.dG.char; 
+        const neighbors = [nodes.mG, nodes.hG]; 
+        
+        const huaMap = {
+          '甲己': '土', '己甲': '土', '乙庚': '金', '庚乙': '金',
+          '丙辛': '水', '辛丙': '水', '丁壬': '木', '壬丁': '木',
+          '戊癸': '火', '癸戊': '火'
+        };
+        
+        for (let neighbor of neighbors) {
+          if (!neighbor || !neighbor.isActive() || neighbor.isVoid) continue;
+          
+          const pair = dmChar + neighbor.char;
+          const huaWx = huaMap[pair];
+          if (!huaWx) continue; // 不符合天干五合则跳过
+          
+          // 检验月令是否为化神五行，如果不是，则检验相合双干在月令是否旺相
+          const monthWx = getEffectiveMonthWx(nodes.mZ);
+          if (monthWx !== huaWx) {
+            const phase1 = QUANTUM_DICT.QI_PHASE[dmChar][nodes.mZ.char];
+            const phase2 = QUANTUM_DICT.QI_PHASE[neighbor.char][nodes.mZ.char];
+            if (!['长生','临官','帝旺'].includes(phase1) && !['长生','临官','帝旺'].includes(phase2)) continue;
+          }
+          
+          // 检验全盘地支是否有化神的根气 (修复：遍历全藏干)
+          let hasRoot = false;
+          ['yZ','mZ','dZ','hZ'].forEach(k => {
+            const z = nodes[k];
+            const hidden = QUANTUM_DICT.HIDDEN[z.char];
+            for (let i = 0; i < hidden.length; i++) {
+              if (hidden[i] && QUANTUM_DICT.WX[hidden[i]] === huaWx) hasRoot = true;
+            }
+          });
+          if (!hasRoot) continue;
+          
+          // 检验化神双干自身是否受损
+          if (isStemSeverelyDamaged(nodes.dG, nodes) || isStemSeverelyDamaged(neighbor, nodes)) continue;
+          
+          return { pattern: `${huaWx}化气格`, type: 'special', desc: `日干[${dmChar}]与${neighbor.label}[${neighbor.char}]合化${huaWx}成功` };
+        }
+        return null;
+    }
+
+    function determineFullPattern(nodes, dmWx, allyScore, enemyScore) {
+        const mZ = nodes.mZ;
+        const dmGan = nodes.dG.char;
+        const isYangGan = ['甲','丙','戊','庚','壬'].includes(dmGan);
+        
+        if (allyScore / (enemyScore || 1) > 3.0 && !hasStrongEnemy(nodes, dmWx)) {
+          const wxName = {'木':'曲直格','火':'炎上格','土':'稼穑格','金':'从革格','水':'润下格'};
+          if (wxName[dmWx]) {
+            return { pattern: wxName[dmWx], type: 'special', desc: `全局${dmWx}气专旺，顺其势而行` };
+          }
+        }
+        
+        const ratio = allyScore / (enemyScore || 1);
+        if (ratio < 0.35 && !hasRealRoot(nodes, dmWx)) {
+          const counts = { '官杀':0, '财星':0, '食伤':0 };
+          ['yG','mG','hG','yZ','mZ','dZ','hZ'].forEach(k => {
+            const n = nodes[k];
+            if (!n.isActive()) return;
+            let effectiveWx = n.isTransformed ? n.transformedWx : n.currentWx;
+            const role = getShiShenName(dmWx, effectiveWx);
+            if (counts.hasOwnProperty(role)) counts[role] += (n.type === '支' ? 2 : 1);
+          });
+          let maxRole = Object.keys(counts).reduce((a, b) => counts[a] > counts[b] ? a : b);
+          return { pattern: `从${maxRole}格`, type: 'special', desc: `日主无根，从于旺势` };
+        }
+        
+        const huaGe = checkHuaQiGe(nodes, dmWx);
+        if (huaGe) {
+          return huaGe;
+        }
+        
+        const effectiveMonthWx = getEffectiveMonthWx(mZ);
+        if (effectiveMonthWx === dmWx) {
+          const patternName = isYangGan ? '建禄格' : '月刃格';
+          return { pattern: patternName, type: 'misc', desc: '比肩秉令，喜财官' };
+        }
+        
+        const hidden = QUANTUM_DICT.HIDDEN[mZ.char];
+        const stems = [nodes.yG, nodes.mG, nodes.hG];
+        
+        for (let h of hidden) {
+          const matchStem = stems.find(s => s.char === h && s.isActive() && !s.isVoid);
+          if (matchStem) {
+            if (isStemSeverelyDamaged(matchStem, nodes)) {
+              continue;
+            }
+            const role = getShiShenName(dmWx, QUANTUM_DICT.WX[h]);
+            return { pattern: `${role}格`, type: 'standard', desc: `月令透出${h}，成${role}格` };
+          }
+        }
+        
+        if (mZ.isTransformed && mZ.transformedWx !== mZ.originalWx) {
+          const role = getShiShenName(dmWx, mZ.transformedWx);
+          return { pattern: `${role}格`, type: 'standard', desc: `月令合化，以${role}为格` };
+        }
+        
+        const mainRole = getShiShenName(dmWx, effectiveMonthWx);
+        return { pattern: `${mainRole}格`, type: 'standard', desc: `月令本气为${mainRole}，未透` };
+      }
+
+    // V-Next风格的格局与强弱判断函数
+    function evaluatePatternAndStrength(nodes, dmGan) {
+        const dmWx = nodes.dG.currentWx;
+        const monthZhi = nodes.mZ.char;
+        const isYinGan = ['乙','丁','己','辛','癸'].includes(dmGan);
+        
+        let allyScore = 0; 
+        let enemyScore = 0; 
+        let resHealthIssue = false;
+        let isTiaoHouCritical = false;
+        
+        const seasonData = QUANTUM_DICT.SEASON_TIANTU[monthZhi];
+        if (seasonData) {
+            if (['癸','壬'].includes(dmGan) && seasonData.hot.includes(dmGan)) isTiaoHouCritical = true;
+            if (['丁','丙'].includes(dmGan) && seasonData.cold.includes(dmGan)) isTiaoHouCritical = true;
+        }
+        
+        let hasRootLocal = hasRealRoot(nodes, dmWx);
+        
+        for(let key in nodes) {
+          if(key === 'dG') continue; 
+          let n = nodes[key];
+          if(!n.isActive()) continue; 
+
+          let baseWeight = 12;
+          if (key === 'mZ') {
+              if (n.hasState('重伤')) { baseWeight = 8; }
+              else if (n.isTransformed && n.transformedWx !== n.originalWx) { baseWeight = 28; }
+              else { baseWeight = 35; }
+          } else if (key === 'dZ') baseWeight = 15;
+          else if (key === 'yZ') baseWeight = 20;
+          else if (key === 'hZ') baseWeight = 12;
+
+          let effectiveWx = n.isTransformed ? n.transformedWx : n.currentWx;
+          let finalEnergy = baseWeight * n.energy;
+          let role = getShiShenName(dmWx, effectiveWx);
+          
+          if(role === '印星' && n.hasState('重伤')) resHealthIssue = true;
+          if(role === '比劫' || role === '印星') allyScore += finalEnergy;
+          else enemyScore += finalEnergy;
+        }
+
+        let ratio = allyScore / (enemyScore || 1);
+        let verdict = '';
+        let isTrueSpecial = false;
+        
+        if (!hasRootLocal) {
+            if (isTiaoHouCritical) {
+                verdict = '身弱 (调候优先)';
+            } else if (ratio < 0.3) {
+                verdict = isYinGan ? '真从格 (阴干易从)' : '真从格 (阳干失势)';
+                isTrueSpecial = true;
+            } else {
+                verdict = '假从 / 极弱';
+            }
+        } else if (ratio > 3.5) {
+            let enemiesAlive = hasStrongEnemy(nodes, dmWx);
+            
+            if (!enemiesAlive) {
+                verdict = '真专旺格 (纯粹无杂)';
+                isTrueSpecial = true;
+            } else {
+                verdict = '假专旺 / 极强';
+            }
+        } 
+        else if (ratio > 1.25) { verdict = '身强 (可担财官)'; }
+        else if (ratio < 0.85) { verdict = '身弱 (杀重身轻)'; }
+        else { verdict = '中和 (平衡流转)'; }
+
+        const patternResult = determineFullPattern(nodes, dmWx, allyScore, enemyScore);
+        
+        // 根据格局类型和强弱返回用神信息
+        let yongShen = { primary: [], secondary: [], avoid: [] };
+        
+        if (isTrueSpecial && ratio < 0.3) { // 真从格
+            // 从格的用神就是异党
+            if (patternResult.pattern.includes('从官杀')) {
+                yongShen.primary = ['官杀'];
+                yongShen.secondary = ['财星'];
+            } else if (patternResult.pattern.includes('从财')) {
+                yongShen.primary = ['财星'];
+                yongShen.secondary = ['官杀'];
+            } else if (patternResult.pattern.includes('从食伤')) {
+                yongShen.primary = ['食伤'];
+                yongShen.secondary = ['财星'];
+            } else if (patternResult.pattern.includes('从比劫')) {
+                yongShen.primary = ['比劫'];
+                yongShen.secondary = ['印星'];
+            }
+        } else if (isTrueSpecial && ratio > 3.5) { // 专旺格
+            yongShen.primary = ['食伤'];
+            yongShen.secondary = ['印星'];
+        } else if (verdict.includes('身弱')) {
+            yongShen.primary = [QUANTUM_DICT.SHISHEN[dmWx].res]; // 印星
+            yongShen.secondary = [dmWx]; // 比劫
+        } else if (verdict.includes('身强')) {
+            yongShen.primary = [QUANTUM_DICT.SHISHEN[dmWx].off]; // 官杀
+            yongShen.secondary = [QUANTUM_DICT.SHISHEN[dmWx].out]; // 食伤
+            yongShen.avoid = [dmWx, QUANTUM_DICT.SHISHEN[dmWx].res]; // 避开比劫和印星
+        } else { // 中和
+            yongShen.primary = [QUANTUM_DICT.SHISHEN[dmWx].off];
+            yongShen.secondary = [QUANTUM_DICT.SHISHEN[dmWx].out];
+        }
+        
+        return { 
+            strength: verdict, 
+            pattern: patternResult, 
+            yongShen: yongShen,
+            ally: allyScore,
+            enemy: enemyScore
+        };
+    }
+
+    /**
+     * 选择用神、喜神、忌神（使用V-Next逻辑）
+     */
+    function selectYongShenVNext(info) {
+        const dayGan = info.dayGan;
+        const monthZhi = info.yueZhi;
+        const zhiList = info.zhiList;
+        const ganList = info.ganList;
+        const hideGanList = info.hideGanList;
+
+        // 构建V-Next风格的节点
+        const nodes = {
+            yG: new BaziNode('yG', '年干', ganList[0], '干'), yZ: new BaziNode('yZ', '年支', zhiList[0], '支'),
+            mG: new BaziNode('mG', '月干', ganList[1], '干'), mZ: new BaziNode('mZ', '月令', zhiList[1], '支'),
+            dG: new BaziNode('dG', '日干', ganList[2], '干'),   dZ: new BaziNode('dZ', '日支', zhiList[2], '支'),
+            hG: new BaziNode('hG', '时干', ganList[3], '干'), hZ: new BaziNode('hZ', '时支', zhiList[3], '支')
+        };
+
+        // 初始化纳音
+        const nayinDict = {
+            y: info.naYinList[0], m: info.naYinList[1], d: info.naYinList[2], h: info.naYinList[3]
+        };
+
+        // 执行V-Next流程
+        processNaYinAndPhase(nodes, nayinDict, dayGan);
+        processVoid(nodes, info.ec);
+        processShenSha(nodes);
+        applySeasonalBaseline(nodes, monthZhi);
+        processVerticalInteractions(nodes);
+        processStemInteractions(nodes);
+        processCombinations(nodes);
+        processBranchInteractions(nodes);
+        processMediation(nodes);
+        processFuyinFanyin(nodes);
+
+        // 获取最终格局和强弱
+        const result = evaluatePatternAndStrength(nodes, dayGan);
+        return result;
+    }
+
+    // ================= 八字信息获取（整合优化）=================
+    function getBaziInfo(solar, gender) {
+        const lunar = solar.getLunar();
+        const ec = lunar.getEightChar(); ec.setSect(2);
+        const lunarMonth = Math.abs(lunar.getMonth());
+        const yearGZ = ec.getYear(), monthGZ = ec.getMonth(), dayGZ = ec.getDay(), timeGZ = ec.getTime();
+        const ganList = [yearGZ[0], monthGZ[0], dayGZ[0], timeGZ[0]];
+        const zhiList = [yearGZ[1], monthGZ[1], dayGZ[1], timeGZ[1]];
+        const dayGan = ganList[2], dayZhi = zhiList[2], nianZhi = zhiList[0];
+        const shiShenGan = [ec.getYearShiShenGan(), ec.getMonthShiShenGan(), '日主', ec.getTimeShiShenGan()];
+        const shiShenZhi = [ec.getYearShiShenZhi(), ec.getMonthShiShenZhi(), ec.getDayShiShenZhi(), ec.getTimeShiShenZhi()];
+        const naYinList = [ec.getYearNaYin(), ec.getMonthNaYin(), ec.getDayNaYin(), ec.getTimeNaYin()];
+        const hideGanList = [normalizeHideGan(ec.getYearHideGan()), normalizeHideGan(ec.getMonthHideGan()), normalizeHideGan(ec.getDayHideGan()), normalizeHideGan(ec.getTimeHideGan())];
+
+        const monthZhi = zhiList[1];
+        const monthHeInfo = getHeHuaEffect(monthZhi, zhiList);
+        const effectiveMonthWx = monthHeInfo ? monthHeInfo.resultWx : zhiWuXing(monthZhi);
+
+        // 使用V-Next的格局判断
+        const vnextResult = selectYongShenVNext({ dayGan, zhiList, ganList, hideGanList, lunarMonth, yueZhi: monthZhi, effectiveMonthWx, ec, naYinList });
+
+        const shensha = {
+            yincha: YINCHA_YANGCUO.includes(dayGZ),
+            guchen: zhiList.includes(getGuChen(nianZhi)),
+            guasu: zhiList.includes(getGuaSu(nianZhi)),
+            taohua: zhiList.includes(getXianChi(nianZhi)),
+            taohuaZhi: getXianChi(nianZhi),
+            hongyan: zhiList.includes(getHongYan(dayGan)),
+            hongyanZhi: getHongYan(dayGan),
+            liuxia: zhiList.includes(getLiuXia(dayGan)),
+            liuxiaZhi: getLiuXia(dayGan),
+            yangren: zhiList.includes(getYangRen(dayGan)),
+            tianyi: getTianYi(dayGan),
+            kuiGang: isKuiGang(dayGan, dayZhi)
+        };
+
+        let daYunList = [], qiYunAge = 0;
+        try { 
+            const yun = ec.getYun(gender, 2); 
+            if (yun) { 
+                qiYunAge = yun.getStartYear(); 
+                const dy = yun.getDaYun(); 
+                if (dy) daYunList = dy.map(d => d.getGanZhi()); 
+            } 
+        } catch (e) {}
+
+        return { 
+            solar, lunar, ec, yearGZ, monthGZ, dayGZ, timeGZ, 
+            ganList, zhiList, dayGan, dayZhi, nianZhi, yueZhi: zhiList[1],
+            shiShenGan, shiShenZhi, naYinList, hideGanList, 
+            shensha, qiYunAge, daYunList, lunarMonth, shengXiao: lunar.getYearShengXiao(),
+            pattern: { 
+                strength: vnextResult.strength, 
+                type: vnextResult.strength.includes('强') ? 'strong' : (vnextResult.strength.includes('弱') ? 'weak' : 'neutral'), 
+                yongShen: vnextResult.yongShen 
+            }
+        };
+    }
+
+    // ================= 智能化解引擎改进 =================
+    const ResolutionEngine = {
+        CONFLICT_MAP: {
+            '冲:子午': '木', '冲:卯酉': '水', '冲:寅申': '水', '冲:巳亥': '木', '冲:辰戌': '金', '冲:丑未': '金',
+            '害:酉戌': '水', '害:子未': '木', '害:寅巳': '水', '害:丑午': '金', '害:卯辰': '火', '害:申亥': '木',
+            '刑:寅巳申': '水'
+        },
+        MONTH_STRENGTH: {
+            '寅':{'木':1.5,'火':1.2,'土':0.9,'金':0.7,'水':1.0},'卯':{'木':1.5,'火':1.1,'土':0.8,'金':0.6,'水':1.0},
+            '辰':{'木':1.0,'火':1.0,'土':1.3,'金':1.0,'水':0.8},'巳':{'木':0.9,'火':1.5,'土':1.1,'金':0.9,'水':0.6},
+            '午':{'木':0.8,'火':1.5,'土':1.2,'金':0.8,'水':0.5},'未':{'木':0.7,'火':1.3,'土':1.4,'金':0.9,'水':0.6},
+            '申':{'木':0.8,'火':0.6,'土':0.9,'金':1.5,'水':1.2},'酉':{'木':0.7,'火':0.5,'土':0.8,'金':1.5,'水':1.1},
+            '戌':{'木':0.8,'火':0.9,'土':1.3,'金':1.1,'水':0.7},'亥':{'木':1.1,'火':0.6,'土':0.7,'金':0.8,'水':1.5},
+            '子':{'木':1.0,'火':0.5,'土':0.6,'金':0.7,'水':1.5},'丑':{'木':0.9,'火':0.6,'土':1.3,'金':1.0,'水':0.8}
+        },
+        computeWuxingPower(info, wx) {
+            if (!wx) return 0;
+            let power = 0;
+            const coeff = this.MONTH_STRENGTH[info.yueZhi] || {};
+            const mCoeff = coeff[wx] || 1.0;
+            
+            // 天干力量
+            info.ganList.forEach(g => { 
+                if (ganWuXing(g) === wx) {
+                    // 考虑通根增强
+                    const rootBonus = info.zhiList.filter(z => zhiWuXing(z) === wx).length * 0.5;
+                    power += Math.round((3 + rootBonus) * mCoeff);
+                }
+            });
+            
+            // 地支力量
+            info.zhiList.forEach(z => { 
+                if (zhiWuXing(z) === wx) power += Math.round(5 * mCoeff); 
+            });
+            
+            // 藏干力量
+            info.hideGanList.forEach(hides => {
+                hides.forEach(cg => { 
+                    if (ganWuXing(cg) === wx) power += Math.round(1 * mCoeff); 
+                });
+            });
+            
+            return power;
+        },
+        evaluateConflict(manInfo, womanInfo, conflictType, zhi1, zhi2, baseScore) {
+            const maxPenalty = Math.abs(baseScore);
+            if (maxPenalty === 0) return { bonus: 0, reason: '' };
+            
+            const allZhi = [...manInfo.zhiList, ...womanInfo.zhiList];
+            let recovered = 0, reasons = [];
+            
+            // 贪合忘冲/害
+            const checkHe = (z) => { 
+                for (let az of allZhi) { 
+                    if (zhiLiuHe(z, az) || isZhiSanHe(z, az)) return { zhi: az, type: '合' }; 
+                } 
+                return null; 
+            };
+            
+            [zhi1, zhi2].forEach(z => { 
+                const he = checkHe(z); 
+                if (he) { 
+                    reasons.push(`【${he.zhi}】与【${z}】相合，贪合忘${conflictType}`); 
+                    recovered += maxPenalty * 0.4; 
+                } 
+            });
+            
+            // 五行通关
+            const key = `${conflictType}:${zhi1}${zhi2}`;
+            const passWx = this.CONFLICT_MAP[key] || this.CONFLICT_MAP[`${conflictType}:${zhi2}${zhi1}`];
+            
+            if (passWx) {
+                const manPower = this.computeWuxingPower(manInfo, passWx);
+                const womanPower = this.computeWuxingPower(womanInfo, passWx);
+                const totalPower = manPower + womanPower;
+                
+                // 检查通关五行是否为双方喜用
+                const isManYong = manInfo.pattern.yongShen.primary.includes(passWx) || manInfo.pattern.yongShen.secondary.includes(passWx);
+                const isWomanYong = womanInfo.pattern.yongShen.primary.includes(passWx) || womanInfo.pattern.yongShen.secondary.includes(passWx);
+                
+                if (totalPower >= 10 && (isManYong || isWomanYong)) {
+                    recovered += maxPenalty * 0.3;
+                    reasons.push(`${passWx}行通关有力且为喜用`);
+                } else if (totalPower >= 10) {
+                    recovered += maxPenalty * 0.15;
+                    reasons.push(`${passWx}行通关但非喜用，化解有限`);
+                }
+            }
+            
+            recovered = Math.min(recovered, maxPenalty * 0.8);
+            if (recovered > 0) return { 
+                bonus: Math.round(recovered), 
+                reason: `【智能化解】${[...new Set(reasons)].join('；')}。挽回 ${Math.round(recovered)} 分。` 
+            };
+            return { bonus: 0, reason: '' };
+        }
+    };
+	
+    // ================= 神煞函数 =================
+    function getTianYi(dayGan) { 
+        const map = {'甲':['丑','未'],'戊':['丑','未'],'庚':['丑','未'],'乙':['子','申'],'己':['子','申'],'丙':['亥','酉'],'丁':['亥','酉'],'壬':['卯','巳'],'癸':['卯','巳'],'辛':['午','寅']}; 
+        return map[dayGan] || []; 
+    }
+    function isKuiGang(gan, zhi) { return ['庚辰','庚戌','壬辰','戊戌'].includes(gan+zhi); }
+    function getGuChen(nianZhi) { 
+        const map = {'亥':'寅','子':'寅','丑':'寅','寅':'巳','卯':'巳','辰':'巳','巳':'申','午':'申','未':'申','申':'亥','酉':'亥','戌':'亥'}; 
+        return map[nianZhi]; 
+    }
+    function getGuaSu(nianZhi) { 
+        const map = {'亥':'戌','子':'戌','丑':'戌','寅':'丑','卯':'丑','辰':'丑','巳':'辰','午':'辰','未':'辰','申':'未','酉':'未','戌':'未'}; 
+        return map[nianZhi]; 
+    }
+    function getXianChi(nianZhi) { 
+        const map = {'申':'酉','子':'酉','辰':'酉','寅':'卯','午':'卯','戌':'卯','巳':'午','酉':'午','丑':'午','亥':'子','卯':'子','未':'子'}; 
+        return map[nianZhi]; 
+    }
+    function getYangRen(dayGan) { 
+        const map = {'甲':'卯','丙':'午','戊':'午','庚':'酉','壬':'子'}; 
+        return map[dayGan]; 
+    }
+    function getHongYan(dayGan) {
+        const map = {'甲':'午','乙':'午','丙':'寅','丁':'未','戊':'辰','己':'辰','庚':'戌','辛':'酉','壬':'子','癸':'申'};
+        return map[dayGan];
+    }
+    function getLiuXia(dayGan) {
+        const map = {'甲':'酉','乙':'戌','丙':'未','丁':'申','戊':'巳','己':'午','庚':'辰','辛':'卯','壬':'亥','癸':'寅'};
+        return map[dayGan];
+    }
+
+    function shichenToHourMinute(shichen) {
+        const map = { 'zi':{h:0,m:30},'chou':{h:2,m:30},'yin':{h:4,m:30},'mao':{h:6,m:30},'chen':{h:8,m:30},'si':{h:10,m:30},'wu':{h:12,m:30},'wei':{h:14,m:30},'shen':{h:16,m:30},'you':{h:18,m:30},'xu':{h:20,m:30},'hai':{h:22,m:30} };
+        return map[shichen] || { h: 12, m: 0 };
+    }
+
+    // ================= 合婚分析函数 =================
+    function analyzeNianZhu(m, w) {
+        const items = [];
+        const mWx = naYinWuXing(m.naYinList[0]), wWx = naYinWuXing(w.naYinList[0]);
+        if (mWx && wWx) {
+            if (getSheng(mWx) === wWx) items.push({ name: '年柱纳音相生', category:'adjustment', score:3, reason:'祖业气场相生' });
+            else if (getKe(mWx) === wWx) items.push({ name: '年柱纳音相克', category:'adjustment', score:-2, reason:'祖业五行相克' });
+        }
+        const mz = m.zhiList[0], wz = w.zhiList[0];
+        if (zhiLiuHe(mz, wz)) items.push({ name: '年支六合', category:'adjustment', score:4, reason:'年支六合，祖上缘分深厚' });
+        else if (zhiLiuChong(mz, wz)) items.push({ name: '年支相冲', category:'adjustment', score:-4, reason:'年支相冲，祖业根基冲突' });
+        if (tianGanHe(m.ganList[0], w.ganList[0])) items.push({ name: '年干五合', category:'adjustment', score:3, reason:'年干五合，家族支持' });
+        // 年柱天克地冲
+        if ((ganKe(m.ganList[0], w.ganList[0]) || ganKe(w.ganList[0], m.ganList[0])) && zhiLiuChong(mz, wz)) {
+            items.push({ name: '年柱天克地冲', category:'redline', score:-10, reason:'年柱天克地冲，家庭根基严重冲突', fatal: true });
+        }
+        return items;
+    }
+
+    function analyzeYueZhu(m, w) {
+        const items = [];
+        const mz = m.zhiList[1], wz = w.zhiList[1];
+        if (zhiLiuHe(mz, wz)) items.push({ name: '月支六合', category:'structure', score:5, reason:'月支六合，家庭氛围融洽' });
+        else if (zhiLiuChong(mz, wz)) items.push({ name: '月支相冲', category:'structure', score:-4, reason:'月支相冲，家庭观念冲突' });
+        if (ganSheng(m.ganList[1], w.ganList[1]) || ganSheng(w.ganList[1], m.ganList[1])) items.push({ name: '月干相生', category:'structure', score:2, reason:'月干相生，沟通顺畅' });
+        return items;
+    }
+
+    function analyzeRiZhu(m, w) {
+        const items = [];
+        const mg = m.dayGan, wg = w.dayGan;
+        if (tianGanHe(mg, wg)) items.push({ name: '日干五合', category:'structure', score:12, reason:'夫妻天干相吸' });
+        else if (ganSheng(mg, wg)) items.push({ name: '日干相生(男生女)', category:'structure', score:8, reason:'男方包容女方' });
+        else if (ganSheng(wg, mg)) items.push({ name: '日干相生(女生男)', category:'structure', score:7, reason:'女方体贴男方' });
+        else if (ganKe(mg, wg)) items.push({ name: '日干相克(男克女)', category:'structure', score:-6, reason:'男方强势' });
+        else if (ganKe(wg, mg)) items.push({ name: '日干相克(女克男)', category:'structure', score:-5, reason:'女方强势' });
+        const mz = m.dayZhi, wz = w.dayZhi;
+        if (zhiLiuHe(mz, wz)) items.push({ name: '夫妻宫六合', category:'structure', score:20, reason:'夫妻宫六合，最佳婚配标志'  });
+        else if (zhiLiuChong(mz, wz)) {
+            const rescue = ResolutionEngine.evaluateConflict(m, w, '冲', mz, wz, -20);
+            if (rescue.bonus > 0) items.push({ name: '夫妻宫相冲', category:'redline', score: -20 + rescue.bonus, reason: '夫妻宫六冲，但有化解', resolution: true, resolutionText: rescue.reason });
+            else items.push({ name: '夫妻宫相冲（无解）', category:'redline', score: -30, reason: '夫妻宫六冲无解，婚姻大忌', fatal: true });
+        } else if (zhiLiuHai(mz, wz)) {
+            const rescue = ResolutionEngine.evaluateConflict(m, w, '害', mz, wz, -8);
+            items.push({ name: '夫妻宫相害', category:'structure', score: -8 + rescue.bonus, reason: rescue.bonus ? rescue.reason : '夫妻宫相害，易生隔阂' });
+        }
+        if (m.dayGZ === w.dayGZ) items.push({ name: '日柱伏吟', category:'redline', score:-15, reason:'日柱完全相同，婚姻沉闷', fatal: true });
+        return items;
+    }
+
+    function analyzeShiZhu(m, w) {
+        const items = [];
+        const mz = m.zhiList[3], wz = w.zhiList[3];
+        if (zhiLiuHe(mz, wz)) items.push({ name: '时支六合', category:'adjustment', score:3, reason:'时支六合，晚年和睦' });
+        else if (zhiLiuChong(mz, wz)) items.push({ name: '时支相冲', category:'adjustment', score:-2, reason:'时支相冲，子女缘薄' });
+        return items;
+    }
+
+    function analyzePattern(m, w) {
+        const items = [];
+        const mType = m.pattern.type, wType = w.pattern.type;
+        if ((mType==='strong' && wType==='weak') || (mType==='weak' && wType==='strong')) items.push({ name: '格局互补', category:'structure', score:12, reason:'身强身弱互补' });
+        else if (mType === wType && mType !== 'neutral') items.push({ name: '格局同气', category:'structure', score:-5, reason:'同质相斥' });
+        const mYong = m.pattern.yongShen.primary[0], wYong = w.pattern.yongShen.primary[0];
+        if (mYong && wYong) {
+            const wHasM = ResolutionEngine.computeWuxingPower(w, mYong);
+            const mHasW = ResolutionEngine.computeWuxingPower(m, wYong);
+            if (wHasM >= 8 && mHasW >= 8) items.push({ name: '用神互益', category:'structure', score:10, reason:`互为贵人` });
+            else if (wHasM >= 8) items.push({ name: '用神互补（女益男）', category:'structure', score:6, reason:`女方补男方用神` });
+            else if (mHasW >= 8) items.push({ name: '用神互补（男益女）', category:'structure', score:6, reason:`男方补女方用神` });
+            if (getKe(mYong) === wYong || getKe(wYong) === mYong) items.push({ name: '用神互斥', category:'structure', score:-8, reason:'用神五行相克' });
+        }
+        return items;
+    }
+
+    function analyzeShensha(m, w) {
+        const items = [];
+        if (m.shensha.yincha) items.push({ name: '男方阴差阳错', category:'adjustment', score:-3, reason:'婚姻易有误解' });
+        if (w.shensha.yincha) items.push({ name: '女方阴差阳错', category:'adjustment', score:-3, reason:'婚姻易有误解' });
+        let gui = 0;
+        m.shensha.tianyi.forEach(z => { if (w.zhiList.includes(z)) gui++; });
+        w.shensha.tianyi.forEach(z => { if (m.zhiList.includes(z)) gui++; });
+        if (gui > 0) items.push({ name: '天乙贵人', category:'adjustment', score: Math.min(gui*2, 6), reason:'互为贵人' });
+        if (m.shensha.kuiGang && w.shensha.kuiGang) items.push({ name: '双魁罡', category:'adjustment', score:-5, reason:'性格刚强' });
+        else if (m.shensha.kuiGang || w.shensha.kuiGang) items.push({ name: '单魁罡', category:'adjustment', score:-2, reason:'一方性格刚硬' });
+        // 孤寡配
+        if ((m.shensha.guchen && w.shensha.guasu) || (m.shensha.guasu && w.shensha.guchen)) items.push({ name: '孤寡配', category:'adjustment', score:-4, reason:'内心易感孤独' });
+        return items;
+    }
+
+    // 桃花分析
+    function analyzeTaoHua(m, w) {
+        const items = [];
+        const mTaoHua = m.shensha.taohuaZhi;
+        const wTaoHua = w.shensha.taohuaZhi;
+        
+        // 桃花互见
+        if (mTaoHua && w.zhiList.includes(mTaoHua) && wTaoHua && m.zhiList.includes(wTaoHua)) {
+            items.push({ name: '桃花互见', category:'adjustment', score:4, reason:'双方互为对方桃花，吸引力强' });
+        } else if (mTaoHua && w.zhiList.includes(mTaoHua)) {
+            items.push({ name: '男方桃花入女命', category:'adjustment', score:2, reason:'女方对男方有吸引力' });
+        } else if (wTaoHua && m.zhiList.includes(wTaoHua)) {
+            items.push({ name: '女方桃花入男命', category:'adjustment', score:2, reason:'男方对女方有吸引力' });
+        }
+        
+        // 桃花被冲
+        if (mTaoHua && w.zhiList.some(z => zhiLiuChong(z, mTaoHua))) {
+            items.push({ name: '男方桃花被冲', category:'adjustment', score:-3, reason:'男方桃花被冲，感情易波动' });
+        }
+        if (wTaoHua && m.zhiList.some(z => zhiLiuChong(z, wTaoHua))) {
+            items.push({ name: '女方桃花被冲', category:'adjustment', score:-3, reason:'女方桃花被冲，感情易波动' });
+        }
+        
+        return items;
+    }
+
+    function analyzeTenGod(m, w) {
+        const items = [];
+        const countShiShen = (info, target) => {
+            let cnt = 0;
+            info.shiShenGan.forEach((ss, i) => { if (i!==2 && ss && target.some(t=>ss.includes(t))) cnt += 3; });
+            info.shiShenZhi.forEach(ss => { if (ss && target.some(t=>ss.includes(t))) cnt += 2; });
+            return cnt;
+        };
+        const mBiJie = countShiShen(m, ['比肩','劫财']);
+        const mCai = countShiShen(m, ['正财','偏财']);
+        const mShiShang = countShiShen(m, ['食神','伤官']);
+        const wShangGuan = countShiShen(w, ['伤官']);
+        const wZhengGuan = countShiShen(w, ['正官']);
+        const wYin = countShiShen(w, ['正印','偏印']);
+        if (mBiJie >= 6 && mCai >= 2) {
+            let score = -6, desc = '男命比劫夺财，易克妻';
+            if (mShiShang >= 4) { score = -3; desc += '，但有食伤通关化解'; }
+            items.push({ name: '男命比劫夺财', category:'structure', score, reason: desc });
+        }
+        if (wShangGuan >= 4 && wZhengGuan >= 2) {
+            let score = -7, desc = '女命伤官见官，易挑剔丈夫';
+            if (wYin >= 4) { score = -3; desc += '，但有印星护官'; }
+            items.push({ name: '女命伤官见官', category:'structure', score, reason: desc });
+        }
+        return items;
+    }
+
+    function analyzeHardIssues(m, w) {
+        const items = [];
+        // 多柱相冲
+        let chongCount = 0;
+        for (let i=1; i<=3; i++) if (zhiLiuChong(m.zhiList[i], w.zhiList[i])) chongCount++;
+        if (chongCount >= 2) items.push({ name: '多柱相冲', category:'redline', score: -6 * chongCount, reason: `${chongCount}柱相冲，婚姻动荡` });
+        // 羊刃被冲
+        const checkYangRen = (info, partner, gender) => {
+            const yr = getYangRen(info.dayGan);
+            if (yr && partner.zhiList.some(z => zhiLiuChong(z, yr))) {
+                items.push({ name: `${gender}羊刃被冲`, category:'redline', score:-8, reason: `羊刃逢冲，易有冲突` });
+            }
+        };
+        checkYangRen(m, w, '男方');
+        checkYangRen(w, m, '女方');
+        // 三刑
+        const allZhi = [...m.zhiList, ...w.zhiList];
+        if (allZhi.includes('寅') && allZhi.includes('巳') && allZhi.includes('申')) items.push({ name: '寅巳申三刑', category:'redline', score:-25, reason:'无恩之刑，婚灾', fatal:true });
+        if (allZhi.includes('丑') && allZhi.includes('未') && allZhi.includes('戌')) items.push({ name: '丑未戌三刑', category:'redline', score:-25, reason:'恃势之刑，家庭纠纷', fatal:true });
+        return items;
+    }
+
+    // 大运同步分析
+    function analyzeDaYun(m, w) {
+        if (!m.daYunList.length || !w.daYunList.length) return [];
+        const currentAge = (gender, solar) => { return new Date().getFullYear() - solar.getYear(); };
+        const mAge = currentAge(1, m.solar), wAge = currentAge(0, w.solar);
+        const getCurrentDaYunIndex = (age, qiYun) => Math.max(0, Math.floor((age - qiYun) / 10));
+        const mIdx = getCurrentDaYunIndex(mAge, m.qiYunAge), wIdx = getCurrentDaYunIndex(wAge, w.qiYunAge);
+        const maxIdx = Math.min(m.daYunList.length, w.daYunList.length) - 1;
+        let syncScore = 0;
+        for (let i = Math.max(0, mIdx-1); i <= Math.min(maxIdx, mIdx+1); i++) {
+            const md = m.daYunList[i], wd = w.daYunList[i];
+            if (!md || !wd) continue;
+            if (tianGanHe(md[0], wd[0]) || zhiLiuHe(md[1], wd[1])) syncScore += 2;
+            else if (zhiLiuChong(md[1], wd[1])) syncScore -= 2.5;
+        }
+        const final = Math.max(-6, Math.min(6, syncScore));
+        if (Math.abs(final) < 1) return [];
+        return [{ name: '当前大运同步', category:'structure', score: final, reason: final>0 ? '大运和谐' : '大运冲突，需注意' }];
+    }
+
+    // ================= 主计算 =================
+    function computeHehun() {
+        const mDate = document.getElementById('manDate').value, mShi = document.getElementById('manShichen').value;
+        const wDate = document.getElementById('womanDate').value, wShi = document.getElementById('womanShichen').value;
+        if (!mDate || !wDate) { alert('请填写双方出生日期'); return null; }
+        const mTime = shichenToHourMinute(mShi), wTime = shichenToHourMinute(wShi);
+        const [my, mm, md] = mDate.split('-').map(Number), [wy, wm, wd] = wDate.split('-').map(Number);
+        const mSolar = Solar.fromYmdHms(my, mm, md, mTime.h, mTime.m, 0), wSolar = Solar.fromYmdHms(wy, wm, wd, wTime.h, wTime.m, 0);
+        const mInfo = getBaziInfo(mSolar, 1), wInfo = getBaziInfo(wSolar, 0);
+        
+        let allItems = [
+            ...analyzeNianZhu(mInfo, wInfo), 
+            ...analyzeYueZhu(mInfo, wInfo), 
+            ...analyzeRiZhu(mInfo, wInfo), 
+            ...analyzeShiZhu(mInfo, wInfo),
+            ...analyzePattern(mInfo, wInfo), 
+            ...analyzeShensha(mInfo, wInfo), 
+            ...analyzeTaoHua(mInfo, wInfo), // V5.1新增
+            ...analyzeTenGod(mInfo, wInfo), 
+            ...analyzeHardIssues(mInfo, wInfo),
+            ...analyzeDaYun(mInfo, wInfo)  // V5.1新增
+        ];
+        
+        let totalScore = 60, hasFatal = false;
+        allItems.forEach(i => { totalScore += i.score; if (i.fatal) hasFatal = true; });
+        totalScore = Math.max(0, Math.min(100, Math.round(totalScore)));
+        
+        let grade, gradeDesc;
+        if (hasFatal) { grade='红线警示'; gradeDesc='存在绝对硬伤，建议慎重'; }
+        else if (totalScore>=90) { grade='天作之合'; gradeDesc='上等婚配'; }
+        else if (totalScore>=80) { grade='金玉良缘'; gradeDesc='良好婚配'; }
+        else if (totalScore>=70) { grade='中平之合'; gradeDesc='中等婚配'; }
+        else if (totalScore>=60) { grade='勉强可婚'; gradeDesc='需多包容'; }
+        else { grade='婚配大忌'; gradeDesc='冲克过多'; }
+        return { score: totalScore, grade, gradeDesc, manInfo: mInfo, womanInfo: wInfo, allItems, hasFatal };
+    }
+
+    // ================= 渲染函数 =================
+    function renderBaziPan(info, title, gender) {
+        const pillars = ['年柱','月柱','日柱','时柱'];
+        let html = `<div class="bazi-pan"><div class="pan-title"><i class="fa-solid ${gender===1?'fa-mars':'fa-venus'}"></i> ${title} <span class="pattern-tag">${info.pattern.type==='strong'?'身强':(info.pattern.type==='weak'?'身弱':'中和')}</span></div>`;
+        html += `<div class="shengxiao-name">${info.yearGZ}年 · ${info.shengXiao}</div>`;
+        html += `<div class="yongshen-display"><strong>用神：</strong>${info.pattern.yongShen.primary.join('、')||'无'} · <strong>喜神：</strong>${info.pattern.yongShen.secondary.join('、')||'无'}</div><div class="pan-grid">`;
+        for (let i=0;i<4;i++) {
+            const hideStr = info.hideGanList[i].join('');
+            html += `<div class="pillar ${i===2?'day-pillar':''}"><div class="pillar-title">${pillars[i]}</div><div class="tian-gan">${info.ganList[i]}</div><div class="di-zhi">${info.zhiList[i]}</div><div class="cang-gan"><span>藏 ${hideStr||'—'}</span></div><div class="nayin"><span>${info.naYinList[i]}</span></div><div style="font-size:0.7rem;color:#8d6e63">${info.shiShenGan[i]||'—'}</div></div>`;
+        }
+        return html + `</div></div>`;
+    }
+
+    function renderResult(data) {
+        if (!data) return;
+        const { score, grade, gradeDesc, manInfo, womanInfo, allItems, hasFatal } = data;
+        const redItems = allItems.filter(i=>i.category==='redline');
+        const structItems = allItems.filter(i=>i.category==='structure');
+        const adjustItems = allItems.filter(i=>i.category==='adjustment');
+        
+        let html = `<div class="pan-container">${renderBaziPan(manInfo,'乾造',1)}${renderBaziPan(womanInfo,'坤造',0)}</div>`;
+        html += `<div class="score-wrap"><div class="score-num">${score}</div><div class="score-meta"><span class="level-tag">${grade}</span><span class="grade-desc">${gradeDesc}</span></div></div>`;
+        html += `<div class="layer-tags"><span class="layer-tag redline"><i class="fa-solid fa-triangle-exclamation"></i> 红线层 ±30</span><span class="layer-tag structure"><i class="fa-solid fa-scale-balanced"></i> 结构层 ±15</span><span class="layer-tag adjustment"><i class="fa-solid fa-sliders"></i> 调候层 ±5</span></div>`;
+        
+        if (redItems.length) {
+            html += `<div class="fatal-box"><div style="font-weight:700;margin-bottom:12px"><i class="fa-solid fa-heart-crack"></i> 红线警示</div>`;
+            redItems.forEach(i => {
+                html += `<div class="fatal-item">${i.fatal?'<span style="color:#c62828">[致命]</span>':'<span style="color:#e65100">[严重]</span>'} <strong>${i.name}</strong>：${i.reason}</div>`;
+                if (i.resolution) html += `<div class="resolution-text"><i class="fa-solid fa-wand-magic-sparkles"></i> ${i.resolutionText}</div>`;
+            });
+            html += `</div>`;
+        }
+        
+        const goodStruct = structItems.filter(i=>i.score>0);
+        if (goodStruct.length) {
+            html += `<div class="structure-box"><div style="font-weight:700;color:#2e7d32"><i class="fa-solid fa-check-circle"></i> 格局优势</div>`;
+            goodStruct.forEach(i => html += `<div class="structure-item">✓ <strong>${i.name}</strong>：${i.reason}</div>`);
+            html += `</div>`;
+        }
+        
+        // V5.1 改进：分类显示详情
+        html += `<div class="analysis-category"><h3>核心要素分析</h3></div>`;
+        html += `<div class="detail-grid">`;
+        [...redItems, ...structItems].filter(i=>i.category!=='redline' || !i.fatal).sort((a,b)=>Math.abs(b.score)-Math.abs(a.score)).forEach(i => {
+            const plus = i.score>0;
+            html += `<div class="detail-card ${plus?'plus':'minus'}"><div class="detail-header"><span class="detail-label"><i class="fa-solid ${plus?'fa-plus-circle':'fa-minus-circle'}"></i> ${i.name}</span><span class="point ${plus?'plus':'minus'}">${plus?'+':''}${i.score}</span></div><div class="detail-text">${i.reason}</div></div>`;
+        });
+        html += `</div>`;
+        
+        html += `<div class="analysis-category"><h3>辅助要素分析</h3></div>`;
+        html += `<div class="detail-grid">`;
+        adjustItems.sort((a,b)=>Math.abs(b.score)-Math.abs(a.score)).forEach(i => {
+            const plus = i.score>0;
+            html += `<div class="detail-card ${plus?'plus':'minus'}"><div class="detail-header"><span class="detail-label"><i class="fa-solid ${plus?'fa-plus-circle':'fa-minus-circle'}"></i> ${i.name}</span><span class="point ${plus?'plus':'minus'}">${plus?'+':''}${i.score}</span></div><div class="detail-text">${i.reason}</div></div>`;
+        });
+        html += `</div>`;
+        
+        html += `<div class="advice-box"><h3><i class="fa-solid fa-user-doctor"></i> 月老建议</h3><ul>`;
+        if (hasFatal) html += `<li><strong>核心建议：</strong>存在红线硬伤，若非情深义重，建议另择良缘。若执意婚配，需择吉日、多包容。</li>`;
+        else if (score>=80) html += `<li><strong>核心建议：</strong>天作之合，彼此是对方的喜用神。</li>`;
+        else if (score>=60) html += `<li><strong>核心建议：</strong>有缘分但需经营，建议婚前合八字选吉日。</li>`;
+        else html += `<li><strong>核心建议：</strong>婚配阻力较大，需通过风水、职业调和。</li>`;
+        const mYong = manInfo.pattern.yongShen.primary[0], wYong = womanInfo.pattern.yongShen.primary[0];
+        if (mYong && wYong) html += `<li><strong>五行调理：</strong>男方宜用${WX_COLOR_MAP[mYong]}，女方宜用${WX_COLOR_MAP[wYong]}</li>`;
+        html += `</ul></div>`;
+        document.getElementById('resultArea').innerHTML = html;
+        document.getElementById('resultArea').style.display = 'block';
+        window.scrollTo({ top: document.getElementById('resultArea').offsetTop-20, behavior:'smooth' });
+    }
+
+    // ================= 启动 =================
+    function checkLib() {
+        if (typeof Solar === 'undefined') { document.getElementById('libError').style.display='block'; document.getElementById('calcBtn').disabled=true; return false; }
+        document.getElementById('libError').style.display='none'; return true;
+    }
+    document.getElementById('calcBtn').addEventListener('click', function() {
+        if (!checkLib()) return;
+        const btn = this; btn.disabled = true; btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> 红线推演中...';
+        setTimeout(() => {
+            try { const res = computeHehun(); if (res) renderResult(res); }
+            catch (e) { alert('计算错误：'+e.message); console.error(e); }
+            finally { btn.disabled = false; btn.innerHTML = '<i class="fa-solid fa-heart-pulse"></i> 开启红线·推演姻缘'; }
+        }, 100);
+    });
+    setTimeout(checkLib, 1000);
+})();
+</script>
+</body>
+</html>
+
+
+
