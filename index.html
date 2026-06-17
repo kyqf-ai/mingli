@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>八字真鉴 · 透析引擎 V5.0</title>
+  <script src="https://cdn.jsdmirror.com/npm/lunar-javascript@1.7.6/lunar.min.js"></script>
+  <link rel="stylesheet" href="css/main.css">
+</head>
+<body>
+<div class="container">
+  <div class="header">
+    <h2>🔬 八字真鉴 V5.0 · 智能透析</h2>
+    <p class="header-desc">
+      <strong style="color:#204d32;">Lunar框架驱动 · 模块化架构 · 实时推演</strong><br>
+      以子平真诠为理论基础，使用Lunar框架精准计算农历八字</p>
+    <div class="header-grid">
+      <input type="date" id="date" value="1971-03-24"> 
+      <input type="time" id="time" value="04:30">
+      <div class="gender-selector">
+        <label class="gender-label">
+          <input type="radio" name="gender" value="1" checked> 👨男命
+        </label>
+        <label class="gender-label">
+          <input type="radio" name="gender" value="0">👩女命
+        </label>
+      </div>
+      <button id="analyzeBtn" onclick="handleAnalyze()">🌱 开始推演</button>
+    </div>
+  </div>
+
+  <div id="loadingIndicator" class="loading-spinner" style="display:none;"></div>
+  <div id="errorMessage" class="error-alert" style="display:none;"></div>
+
+  <div id="outputArea" style="display: none; animation: slideIn 0.6s ease;">
+    <div class="bazi-grid" id="nodeGrid"></div>
+    <div class="shensha-panel" id="shenshaPanel" style="display:none;"></div>
+    <div class="dashboard" id="mainDashboard"></div>
+    <div id="daYunPanel" style="display:none;"></div>
+  </div>
+
+  <div class="copyright">
+    © 2026 八字真鉴·V5.0 · Lunar框架集成 · 模块化透析引擎
+  </div>
+</div>
+
+<script src="js/lunar-adapter.js"></script>
+<script src="js/bazi-engine.js"></script>
+<script src="js/pattern-detector.js"></script>
+<script src="js/shensha-processor.js"></script>
+<script src="js/ui-renderer.js"></script>
+<script src="js/main.js"></script>
+</body>
+</html>
